@@ -86,7 +86,13 @@ const loginUser = async (req, res, next) => {
         res.status(250).json('User account Expired');
     }
     else {
-        res.status(200).json(finduser[0].userid);
+        let tier = finduser[0].tier?finduser[0].tier:null;
+
+        let message={
+            userid:finduser[0].userid,
+            tier:tier
+        }
+        res.status(200).json(message);
     }
 };
 
@@ -149,6 +155,7 @@ const signIn = async (req, res, next) => {
                     password: password,
                     type: type,
                     role: role,
+                    tier:validtokendet.tier,
                     oraganisationName: oraganisationName,
                     registerdate: registerdates,
                     enddate: enddates

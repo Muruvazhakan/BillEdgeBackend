@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const projectId = process.env.PROJECT_ID;
 const secrectfolder = process.env.SECRECT_FOLDER;
+const stockRoute = require('./router/stockRoute');
 // const keyFilename = process.env.KEYFILENAME;
 const keyFilename = path.join('/etc/secrets', 'helpone-9bf33-64e48296ae59.json');
 const storage = new Storage({ projectId, keyFilename
@@ -148,7 +149,7 @@ app.use('/user/',userRoure);
 
 app.use('/invoice/',invoicegenRoute);
 app.use('/estimate/',estimategenRoute);
-
+app.use('/stock/',stockRoute);
 app.use((req,res,next) =>{
   res.status(400)
   res.json(("No data found"))

@@ -10,6 +10,7 @@ const companyUserSchema = new schema({
     password: {type:String, required: true},
     role:{type:String},
     type:{type:String},
+    tier:{type:String},
     registerdate:{type:Date},
     enddate:{type:Date},
     oraganisationName:{type:String}
@@ -22,6 +23,7 @@ const companyUserTokenCheckSchema = new schema({
     tokentype:{type:String, required: true},
     tokenstatus:{type:String},
     activatedTimeStamp:{type:Date},
+    tier:{type:String},
     dummy1:{type:String},
     dummy2:{type:String},
     dummy3:{type:String},
