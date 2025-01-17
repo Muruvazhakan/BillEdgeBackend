@@ -130,6 +130,8 @@ const addOrUpdateStock = async (props, userid, type) => {
             console.log(singlestock);
             console.log("type^^^^ " + type);
             console.log(' before avgrate' + avgrate);
+            singlestock.status
+            isexiststock.status = singlestock.status ? singlestock.status : (isexiststock.status ? isexiststock.status : "active");
             if (type === "add") {
                 totamt = preamt + currentamt;
                 totqyt = ((singlestock.quantity * 1) + (isexiststock.quantity * 1));
@@ -145,11 +147,13 @@ const addOrUpdateStock = async (props, userid, type) => {
                 isexiststock.amount = totamt;
                 isexiststock.desc = singlestock.desc;
                 isexiststock.hsn = singlestock.hsn;
-                
+
             } else if (type === "sale") {
                 console.log('inside sale');
                 totqyt = ((singlestock.quantity * -1) + (isexiststock.quantity * 1));
-                totamt= isexiststock.rate *1*totqyt;
+                totamt = isexiststock.rate * 1 * totqyt;
+            } else if (type === "delete") {
+                isexiststock.status = "deleted";
             }
             isexiststock.amount = totamt;
             console.log('after cal ' + totqyt + " totamt: " + totamt);
@@ -171,6 +175,7 @@ const addOrUpdateStock = async (props, userid, type) => {
     return ("updated");
 }
 
+
 const addOrUpdateClient = async (props, userid, clientid, type) => {
     let singleclient, client = null, isexistclient, updatesexistclient;
     var datetime = new Date();
@@ -178,7 +183,7 @@ const addOrUpdateClient = async (props, userid, clientid, type) => {
     console.log(props);
 
     singleclient = props;
-    console.log('addOrUpdateClient  ....' +clientid);
+    console.log('addOrUpdateClient  ....' + clientid);
     console.log(singleclient);
     try {
         updatesexistclient = await ClientDetailsSchema.find({ userid: userid, clientid: clientid });
@@ -229,6 +234,47 @@ const addOrUpdateClient = async (props, userid, clientid, type) => {
         }
     }
     return ("updated");
+}
+const deleteStock = async (req, res, next) => {
+
+    let singlestock = req.body.stock.stocklist;
+    let headertext = req.body.stock.authorization;
+    console.log('deleteStock ....');
+    console.log(singlestock);
+    let userid = req.params.userid, updatesexiststock;
+    if (headertext !== "stockrequest") {
+        return res.status(400).json("Authorization restricted");
+    }
+
+    try {
+        updatesexiststock = await AllStockDetailSchema.find({ userid: userid, productid: singlestock.productid });
+
+    } catch (er) {
+        return res.status(400).json('error in stock search at deleting flow ');
+    }
+
+    if (updatesexiststock.length === 0) {
+        return res.status(404).json('No stocks was found');
+    }
+    else {
+        isexiststock = updatesexiststock[0];
+        console.log('isexiststock');
+        console.log(isexiststock);
+        isexiststock.status = "deleted";
+        try {
+
+            console.log('before isexiststock');
+            console.log(isexiststock);
+            await isexiststock.save();
+        } catch (er) {
+            console.log("error in updating single stock ");
+            console.log(er);
+            // return next(new HttpError('error in DB connection in isUserexit process'+er,404));
+            return res.status(400).json('error in deleting stock');
+        }
+    }
+
+    return res.status(200).json('stocks deleted');
 }
 const addOrUpdateStockdata = async (req, res, next) => {
 
@@ -377,6 +423,7 @@ const addOrUpdateStockdata = async (req, res, next) => {
     return res.status(200).json('stocks saved');
 
 }
+
 
 const addOrUpdateSaleStockdata = async (req) => {
     let salestocklist = req.body.invoice.salestocklist;
@@ -663,3 +710,4 @@ exports.getAllClientdata = getAllClientdata;
 exports.getsalesstockid = getsalesstockid;
 exports.addOrUpdateStock = addOrUpdateStock;
 exports.addOrUpdateClient = addOrUpdateClient;
+exports.deleteStock = deleteStock;

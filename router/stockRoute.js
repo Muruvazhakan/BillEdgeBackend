@@ -12,4 +12,5 @@ router.post('/getstockid/:userid',stockcont.getstockid);
 router.post('/savesalesstock/:userid',stockcont.addOrUpdateSaleStockdata);
 router.post('/getsalesstockid/:userid',stockcont.getsalesstockid);
 router.get('/getallhistorysalesstocks/:userid',stockcont.getAllHistorySalesStockdata);
+router.post('/deletestock/:userid',stockcont.deleteStock);
 module.exports=router;

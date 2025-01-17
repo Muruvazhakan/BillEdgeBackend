@@ -360,7 +360,8 @@ const addOrModifyCompanyBasicDetails = async (req, res, next) => {
                 companythankyou: basicdetail.companythankyou,
                 invoiceidcount: basicdetail.invoiceidcount,
                 estimateidcount: basicdetail.estimateidcount,
-                companyImage: basicdetail.companyImage
+                companyImage: basicdetail.companyImage,
+                companymsme:basicdetail.companymsme
             });
             //console.log('req user input ' + isCompanyBasicDetails);
             await isCompanyBasicDetails.save();
@@ -386,6 +387,8 @@ const addOrModifyCompanyBasicDetails = async (req, res, next) => {
         existCompanyBasicDetails.invoiceidcount = basicdetail.invoiceidcount;
         existCompanyBasicDetails.estimateidcount = basicdetail.estimateidcount;
         existCompanyBasicDetails.companyImage = basicdetail.companyImage;
+        existCompanyBasicDetails.companymsme = basicdetail.companymsme;
+        
         console.log('req the modified existCompanyBasicDetails ' + existCompanyBasicDetails);
         try {
             await existCompanyBasicDetails.save();

@@ -41,6 +41,7 @@ const companyBasicDetailSchema = new schema({
     companyDeleration: {type:String},
     companythankyou: {type:String},
     companyImage: {type:String},
+    companymsme:{type:String},
 });
 
 const companyTermsAndConditionDetailSchema = new schema({
