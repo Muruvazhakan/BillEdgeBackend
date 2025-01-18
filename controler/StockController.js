@@ -131,7 +131,7 @@ const addOrUpdateStock = async (props, userid, type) => {
             console.log("type^^^^ " + type);
             console.log(' before avgrate' + avgrate);
             singlestock.status
-            isexiststock.status = singlestock.status ? singlestock.status : (isexiststock.status ? isexiststock.status : "active");
+            isexiststock.status = singlestock.status ? singlestock.status : (isexiststock.status ? isexiststock.status : "Active");
             if (type === "add") {
                 totamt = preamt + currentamt;
                 totqyt = ((singlestock.quantity * 1) + (isexiststock.quantity * 1));
@@ -260,7 +260,7 @@ const deleteStock = async (req, res, next) => {
         isexiststock = updatesexiststock[0];
         console.log('isexiststock');
         console.log(isexiststock);
-        isexiststock.status = "deleted";
+        isexiststock.status = "Deleted";
         try {
 
             console.log('before isexiststock');
