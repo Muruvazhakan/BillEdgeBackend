@@ -6,6 +6,7 @@ const userRoute = require('../controler/userController');
 router.get('/',userRoute.findUser);
 router.post('/login',userRoute.loginUser);
 router.post('/signin',userRoute.signIn);
+router.post('/passwordReset',userRoute.passwordReset);
 router.get('/getcompanybasic/:userid',userRoute.getCompanyBasicDetails);
 router.get('/gettermsandconditioncompany/:userid',userRoute.getCompanyTermsAndConditionDetail);
 router.get('/getcompanybank/:userid',userRoute.getCompanyBankDetails);

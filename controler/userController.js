@@ -86,11 +86,11 @@ const loginUser = async (req, res, next) => {
         res.status(250).json('User account Expired');
     }
     else {
-        let tier = finduser[0].tier?finduser[0].tier:null;
+        let tier = finduser[0].tier ? finduser[0].tier : null;
 
-        let message={
-            userid:finduser[0].userid,
-            tier:tier
+        let message = {
+            userid: finduser[0].userid,
+            tier: tier
         }
         res.status(200).json(message);
     }
@@ -111,7 +111,7 @@ const signIn = async (req, res, next) => {
     let isUserexit, user, isValidToken, validtokendet;
 
     try {
-        isValidToken = await CompanyUserTokenCheck.find({ tokenid: tokenid, tokentype: type});
+        isValidToken = await CompanyUserTokenCheck.find({ tokenid: tokenid, tokentype: type });
         // isUserexit = finduserpass(username, password);
         console.log('req the isValidToken find ' + isValidToken);
     } catch (er) {
@@ -120,7 +120,7 @@ const signIn = async (req, res, next) => {
     if (isValidToken.length === 0) {
         return res.status(250).json("Invalid token");
     }
-    else if(isValidToken[0].tokenstatus !="Active"){
+    else if (isValidToken[0].tokenstatus != "Active") {
         return res.status(250).json("Token id " + tokenid + " already used.");
     }
     else {
@@ -155,7 +155,7 @@ const signIn = async (req, res, next) => {
                     password: password,
                     type: type,
                     role: role,
-                    tier:validtokendet.tier,
+                    tier: validtokendet.tier,
                     oraganisationName: oraganisationName,
                     registerdate: registerdates,
                     enddate: enddates
@@ -183,6 +183,64 @@ const signIn = async (req, res, next) => {
 
         else {
             res.status(200).json('User already exist');
+        }
+    }
+
+}
+
+const passwordReset = async (req, res, next) => {
+    const { username, password, tokenid } = req.body;
+    console.log(req.body);
+    let isUserexit, user, isValidToken, validtokendet;
+
+    try {
+        isValidToken = await CompanyUserTokenCheck.find({ tokenid: tokenid, tokentype: "reset" });
+        // isUserexit = finduserpass(username, password);
+        console.log('req the isValidToken find ' + isValidToken);
+    } catch (er) {
+        throw new HttpError('User find', 400);
+    }
+    if (isValidToken.length === 0) {
+        return res.status(250).json("Invalid token");
+    }
+    else if (isValidToken[0].tokenstatus != "Active") {
+        return res.status(250).json("Token id " + tokenid + " already used.");
+    }
+    else {
+        validtokendet = isValidToken[0];
+
+        try {
+            isUserexit = await CompanyUser.find({ username: username });
+            // isUserexit = finduserpass(username, password);
+            console.log('req the isUserexit find ' + isUserexit);
+        } catch (er) {
+            throw new HttpError('User find', 400);
+        }
+        if (isUserexit.length !== 0) {
+            console.log('isUserexit');
+            try {
+                user=isUserexit[0];
+                user.password=password;
+                validtokendet.tokenstatus = "Used";
+                var activatedTime = new Date();
+                validtokendet.activatedTimeStamp = activatedTime;
+                try {
+                    await validtokendet.save();
+                    await user.save();
+                } catch (er) {
+                    // return next(new HttpError('error in DB connection in CompanyBasicDetails process'+er,404));
+                    return res.status(400).json("error in updating token status " + er);
+                }
+                // validtokendet
+            } catch (er) {
+                // return next(new HttpError('error in DB connection in isUserexit process'+er,404));
+                return res.status(400).json("error in user creation " + er);
+            }
+            return res.status(201).json("Password changed");
+        }
+
+        else {
+            res.status(400).json('User does not exist');
         }
     }
 
@@ -361,7 +419,7 @@ const addOrModifyCompanyBasicDetails = async (req, res, next) => {
                 invoiceidcount: basicdetail.invoiceidcount,
                 estimateidcount: basicdetail.estimateidcount,
                 companyImage: basicdetail.companyImage,
-                companymsme:basicdetail.companymsme
+                companymsme: basicdetail.companymsme
             });
             //console.log('req user input ' + isCompanyBasicDetails);
             await isCompanyBasicDetails.save();
@@ -388,7 +446,7 @@ const addOrModifyCompanyBasicDetails = async (req, res, next) => {
         existCompanyBasicDetails.estimateidcount = basicdetail.estimateidcount;
         existCompanyBasicDetails.companyImage = basicdetail.companyImage;
         existCompanyBasicDetails.companymsme = basicdetail.companymsme;
-        
+
         console.log('req the modified existCompanyBasicDetails ' + existCompanyBasicDetails);
         try {
             await existCompanyBasicDetails.save();
@@ -506,6 +564,7 @@ exports.uploadCompanyLogo = uploadCompanyLogo;
 exports.findUser = findUser;
 exports.loginUser = loginUser;
 exports.signIn = signIn;
+exports.passwordReset = passwordReset;
 exports.getCompanyTermsAndConditionDetail = getCompanyTermsAndConditionDetail;
 exports.getCompanyBasicDetails = getCompanyBasicDetails;
 exports.getCompanyBankDetails = getCompanyBankDetails;
