@@ -24,7 +24,7 @@ const findUser = async (req, res, next) => {
 const validateUser = (userid) => {
     var datetime = new Date();
     console.log("inside Validator123");
-    console.log(userid[0].enddate + " , " + datetime + " :" + userid[0].enddate <= datetime);
+    // console.log(userid[0].enddate + " , " + datetime + " :" + userid[0].enddate <= datetime);
     console.log(userid);
     if (userid[0].enddate != null && userid[0].enddate <= datetime) {
         return true;
@@ -76,8 +76,8 @@ const loginUser = async (req, res, next) => {
     }
     console.log(finduser);
     console.log("finduser");
-    let isValidUser = validateUser(finduser);
-    console.log(isValidUser + " isValidUser ");
+    // let isValidUser = validateUser(finduser);
+    // console.log(isValidUser + " isValidUser ");
     if (finduser.length === 0) {
         //console.log('undefined');
         res.status(224).json('not found');
