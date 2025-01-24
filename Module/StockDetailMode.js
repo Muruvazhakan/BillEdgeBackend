@@ -31,6 +31,8 @@ const allStockDetailSchema = new schema({
     desc: { type: String },
     status: { type: String },
     quantity: { type: Number },
+    totalquantity: { type: Number },
+    soldquantity: { type: Number },
     rate: { type: Number },
     salerate: { type: Number },
     amount: { type: Number },

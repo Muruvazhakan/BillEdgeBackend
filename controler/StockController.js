@@ -102,6 +102,8 @@ const addOrUpdateStock = async (props, userid, type) => {
                 productid: singlestock.productid,
                 hsn: singlestock.hsn,
                 quantity: singlestock.quantity,
+                totalquantity:singlestock.quantity,
+                soldquantity:0,
                 desc: singlestock.desc,
                 status:"Active",
                 rate: singlestock.rate,
@@ -110,8 +112,8 @@ const addOrUpdateStock = async (props, userid, type) => {
                 lastupdatedstockdate: datetime,
                 
             });
-            // console.log('stock');
-            // console.log(stock);
+            console.log('stock updatesexiststock');
+            console.log(stock);
             try {
                 await stock.save({ upsert: true });
             } catch (er) {
@@ -137,6 +139,7 @@ const addOrUpdateStock = async (props, userid, type) => {
             if (type === "add") {
                 totamt = preamt + currentamt;
                 totqyt = ((singlestock.quantity * 1) + (isexiststock.quantity * 1));
+                isexiststock.totalquantity = ((singlestock.quantity * 1) + (isexiststock.totalquantity * 1));
                 if (totqyt != 0) {
                     avgrate = ((totamt) / (totqyt)).toFixed(2);
                     // avgsalerate = (((isexiststock.salerate * 1 * isexiststock.quantity * 1) + (singlestock.salerate * 1 * singlestock.quantity * 1)) / (totqyt)).toFixed(2);
@@ -149,17 +152,20 @@ const addOrUpdateStock = async (props, userid, type) => {
                 isexiststock.amount = totamt;
                 isexiststock.desc = singlestock.desc;
                 isexiststock.hsn = singlestock.hsn;
+                isexiststock.quantity = totqyt;
 
             } else if (type === "sale") {
                 console.log('inside sale');
                 totqyt = ((singlestock.quantity * -1) + (isexiststock.quantity * 1));
                 totamt = isexiststock.rate * 1 * totqyt;
+                isexiststock.quantity = totqyt;
+                isexiststock.soldquantity = ((singlestock.quantity * 1) + ((isexiststock.soldquantity && isexiststock.soldquantity!==null?isexiststock.soldquantity:0) * 1));
             } else if (type === "delete") {
                 isexiststock.status = "Deleted";
+                isexiststock.quantity=0;
             }
             isexiststock.amount = totamt;
             console.log('after cal ' + totqyt + " totamt: " + totamt);
-            isexiststock.quantity = totqyt;
             isexiststock.lastupdatedstockdate = datetime;
             try {
 
