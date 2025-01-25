@@ -144,7 +144,7 @@ const addOrUpdateStock = async (props, userid, type) => {
                     avgrate = ((totamt) / (totqyt)).toFixed(2);
                     // avgsalerate = (((isexiststock.salerate * 1 * isexiststock.quantity * 1) + (singlestock.salerate * 1 * singlestock.quantity * 1)) / (totqyt)).toFixed(2);
                 }
-
+                isexiststock.status = "Active";
                 console.log('after avgrate' + avgrate);
                 // console.log('after salerate' + avgsalerate);
                 isexiststock.rate = avgrate;
@@ -153,12 +153,14 @@ const addOrUpdateStock = async (props, userid, type) => {
                 isexiststock.desc = singlestock.desc;
                 isexiststock.hsn = singlestock.hsn;
                 isexiststock.quantity = totqyt;
+                
 
             } else if (type === "sale") {
                 console.log('inside sale');
                 totqyt = ((singlestock.quantity * -1) + (isexiststock.quantity * 1));
                 totamt = isexiststock.rate * 1 * totqyt;
                 isexiststock.quantity = totqyt;
+                
                 isexiststock.soldquantity = ((singlestock.quantity * 1) + ((isexiststock.soldquantity && isexiststock.soldquantity!==null?isexiststock.soldquantity:0) * 1));
             } else if (type === "delete") {
                 isexiststock.status = "Deleted";
