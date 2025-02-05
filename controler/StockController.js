@@ -237,8 +237,8 @@ const addOrUpdateClient = async (props, userid, clientid, type) => {
       clientGST: singleclient.clientGST,
       lastupdatedclientdate: datetime,
     });
-    // console.log('stock');
-    // console.log(stock);
+    console.log("stock");
+    console.log(stock);
     try {
       await client.save({ upsert: true });
     } catch (er) {
