@@ -237,8 +237,6 @@ const addOrUpdateClient = async (props, userid, clientid, type) => {
       clientGST: singleclient.clientGST,
       lastupdatedclientdate: datetime,
     });
-    console.log("stock");
-    console.log(stock);
     try {
       await client.save({ upsert: true });
     } catch (er) {
@@ -333,17 +331,6 @@ const addOrUpdateStockdata = async (req, res, next) => {
     updatesexiststock,
     beforeisexistsalestock,
     existstock = false;
-
-  let responClientUpdate = await addOrUpdateClient(
-    req.body.stock,
-    userid,
-    clientid,
-    "add"
-  );
-  console.log("responClientUpdate");
-  console.log(responClientUpdate);
-  if (responClientUpdate != "updated")
-    return res.status(400).json("error in " + responClientUpdate);
 
   // console.log('singlestock');
   // console.log(singlestock);
@@ -463,6 +450,16 @@ const addOrUpdateStockdata = async (req, res, next) => {
     if (results !== "updated")
       return res.status(400).json("error in " + results);
   }
+  let responClientUpdate = await addOrUpdateClient(
+    req.body.stock,
+    userid,
+    clientid,
+    "add"
+  );
+  console.log("responClientUpdate");
+  console.log(responClientUpdate);
+  if (responClientUpdate != "updated")
+    return res.status(400).json("error in " + responClientUpdate);
 
   return res.status(200).json("stocks saved");
 };
