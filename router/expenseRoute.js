@@ -14,4 +14,12 @@ router.delete("/expenses/:userid/:id", expenseController.deleteExpense); // DE
 //   "/expenses/category/:category",
 //   expenseController.getExpensesByCategory
 // );
+
+router.post("/services/:userid", expenseController.createOrUpdateService);
+
+// Route to get all expenses
+router.get("/services/:userid", expenseController.getAllServices);
+
+router.delete("/services/:userid/:id", expenseController.deleteServices); // DE
+// Route to get expenses by category
 module.exports = router;
