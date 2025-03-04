@@ -103,7 +103,10 @@ const addOrUpdateStock = async (props, userid, type) => {
     console.log("updatesexiststock");
     console.log(updatesexiststock);
     console.log(updatesexiststock.length);
-
+    if (updatesexiststock.length === 0 && type === "sale") {
+      console.log("updatesexiststock 0 and sale");
+      return "updated";
+    }
     if (updatesexiststock.length === 0) {
       stock = new dbServerr({
         userid: userid,
