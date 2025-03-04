@@ -29,6 +29,7 @@ const bucket = storage.bucket(process.env.BUCKET_NAME);
 
 const userRoure = require("./router/userRoute");
 const userImageRoute = require("./controler/userController");
+const expenseRoute = require("./router/expenseRoute");
 // const invoicegen = require('./router/invoicegenRoute');
 const invoicegenRoute = require("./router/invoicegenRoute");
 const estimategenRoute = require("./router/estimateRoute");
@@ -158,7 +159,7 @@ app.use(
   })
 );
 app.use("/user/", userRoure);
-
+app.use("/expense/", expenseRoute);
 app.use("/invoice/", invoicegenRoute);
 app.use("/estimate/", estimategenRoute);
 app.use("/stock/", stockRoute);
