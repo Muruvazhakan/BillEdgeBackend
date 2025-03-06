@@ -270,7 +270,7 @@ const addOrUpdateClient = async (props, userid, clientid, type) => {
   }
   return "updated";
 };
-const deleteStock = async (req, res, next) => {
+const deleteStocks2 = async (req, res, next) => {
   let singlestock = req.body.stock.stocklist;
   let headertext = req.body.stock.authorization;
   console.log("deleteStock ....");
@@ -311,6 +311,37 @@ const deleteStock = async (req, res, next) => {
 
   return res.status(200).json("stocks deleted");
 };
+
+// Delete an Stock
+const deleteStock = async (req, res) => {
+  console.log("req.params");
+  console.log(req.params);
+  console.log(req.body);
+  let singlestock = req.body.stock;
+  console.log(req.body);
+  let userid = req.params.userid;
+  let id = singlestock.productid; // Get the stocks ID from the URL
+  console.log(id);
+
+  try {
+    // If 'id' is a string or number, no need to cast it to ObjectId
+    const stocks = await AllStockDetailSchema.findOneAndDelete({
+      productid: id, // Custom field 'id' in the query
+      userid: userid, // Custom field 'userid' in the query
+    });
+
+    if (!stocks) {
+      return res.status(404).json({ message: "Stock not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "Stock deleted successfully", stocks });
+  } catch (error) {
+    console.error(error); // For debugging purposes
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 const addOrUpdateStockdata = async (req, res, next) => {
   let stocklist = req.body.stock.stocklist;
   let clientid = req.body.stock.clientid;
