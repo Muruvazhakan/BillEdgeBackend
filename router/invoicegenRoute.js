@@ -17,4 +17,8 @@ router.post("/getinvoiceid/:userid", invoicecont.getInvoiceid);
 router.post("/:userid", invoicecont.getallinvoice);
 router.post("/saveinvoiceid/:userid", invoicecont.incremeantinvoiceid);
 router.post("/deleteinvoice/:userid", invoicecont.deleteInvoice);
+router.post(
+  "/deleteinvoiceestimate/:userid",
+  invoicecont.deleteInvoiceEstimate
+);
 module.exports = router;

@@ -530,6 +530,35 @@ const deleteInvoice = async (req, res, next) => {
   }
 };
 
+const deleteInvoiceEstimate = async (req, res, next) => {
+  console.log("req.params deleteInvoiceEstimate");
+  console.log(req.params);
+  console.log(req.body);
+  let singleinvoiceest = req.body.invoice;
+  console.log(req.body);
+  let userid = req.params.userid;
+
+  try {
+    // If 'id' is a string or number, no need to cast it to ObjectId
+    const deleteinvestimate = await EstimateInvoiceDetail.findOneAndDelete({
+      invoiceid: singleinvoiceest.invoiceid, // Custom field 'id' in the query
+      userid: userid, // Custom field 'userid' in the query
+    });
+    console.log("deleteinvestimate");
+    console.log(deleteinvestimate);
+    if (!deleteinvestimate) {
+      return res.status(404).json({ message: "Stock not found" });
+    }
+    return res.status(200).json({
+      message: "Invoice Estimation deleted successfully",
+      deleteinvestimate,
+    });
+  } catch (error) {
+    console.error(error); // For debugging purposes
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 exports.getInvoiceid = getInvoiceid;
 exports.incremeantinvoiceid = incremeantinvoiceid;
 exports.createorupdateinvoice = createorupdateinvoice;
@@ -537,3 +566,4 @@ exports.getallestimateinvoice = getallestimateinvoice;
 exports.createorupdateestimateinvoice = createorupdateestimateinvoice;
 exports.getallinvoice = getallinvoice;
 exports.deleteInvoice = deleteInvoice;
+exports.deleteInvoiceEstimate = deleteInvoiceEstimate;
