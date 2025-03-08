@@ -84,8 +84,12 @@ const addOrUpdateStock = async (props, userid, type) => {
   let singlestock,
     stock = null,
     isexiststock,
+    deletestock = false,
     updatesexiststock;
   var datetime = new Date();
+  console.log("props  ....");
+  console.log(props);
+  console.log(props.length + " props.length");
   // let dbServerr = (type =="add" ? AllStockDetailSchema : AllSalesStockDetailSchema);
   let dbServerr = AllStockDetailSchema;
   for (let i = 0; i < props.length; i++) {
@@ -103,9 +107,12 @@ const addOrUpdateStock = async (props, userid, type) => {
     console.log("updatesexiststock");
     console.log(updatesexiststock);
     console.log(updatesexiststock.length);
-    if (updatesexiststock.length === 0 && type === "sale") {
-      console.log("updatesexiststock 0 and sale");
-      return "updated";
+    if (
+      updatesexiststock.length === 0 &&
+      (type === "sale" || type === "deleteinvoice")
+    ) {
+      console.log("updatesexiststock 0 and sale or delete");
+      continue;
     }
     if (updatesexiststock.length === 0) {
       stock = new dbServerr({
@@ -187,22 +194,42 @@ const addOrUpdateStock = async (props, userid, type) => {
             ? isexiststock.soldquantity
             : 0) *
             1;
-      } else if (type === "delete") {
-        isexiststock.status = "Deleted";
-        isexiststock.quantity = 0;
+      } else if (type === "deleteinvoice") {
+        console.log("inside delete");
+        totqyt = singlestock.quantity * 1 + isexiststock.quantity * 1;
+        totamt = isexiststock.rate * 1 * totqyt;
+        isexiststock.quantity = totqyt;
+        if (singlestock.quantity * 1 === isexiststock.quantity * 1)
+          deletestock = true;
       }
       isexiststock.amount = totamt;
       console.log("after cal " + totqyt + " totamt: " + totamt);
       isexiststock.lastupdatedstockdate = datetime;
-      try {
-        console.log("before isexiststock 193");
+      if (!deletestock) {
+        try {
+          console.log("before isexiststock 193");
+          console.log(isexiststock);
+          await isexiststock.save();
+        } catch (er) {
+          console.log("error in updating single stock ");
+          console.log(er);
+          // return next(new HttpError('error in DB connection in isUserexit process'+er,404));
+          return "error in updating single stock";
+        }
+      } else {
+        console.log("delete");
         console.log(isexiststock);
-        await isexiststock.save();
-      } catch (er) {
-        console.log("error in updating single stock ");
-        console.log(er);
-        // return next(new HttpError('error in DB connection in isUserexit process'+er,404));
-        return "error in updating single stock";
+        const stocks = await AllStockDetailSchema.findOneAndDelete({
+          productid: isexiststock.productid, // Custom field 'id' in the query
+          userid: userid, // Custom field 'userid' in the query
+        });
+
+        console.log("stocks result");
+        console.log(stocks);
+
+        if (!stocks) {
+          return "Stock not found";
+        }
       }
     }
   }

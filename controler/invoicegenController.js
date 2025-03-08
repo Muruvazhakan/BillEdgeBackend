@@ -466,9 +466,74 @@ const createorupdateestimateinvoice = async (req, res, next) => {
   }
   return res.status(200).json("estimated invoice saved");
 };
+
+const deleteInvoice = async (req, res, next) => {
+  console.log("req.params");
+  console.log(req.params);
+  console.log(req.body);
+  let singleinvoice = req.body.invoice;
+  console.log(req.body);
+  let userid = req.params.userid;
+
+  let isexistinvoice, updatesexistinvoice, beforeisexistsalestock;
+  // console.log('singleinvoice');
+  // console.log(singleinvoice);
+  // return res
+  //   .status(200)
+  //   .json({ message: "Invoice deleted successfully", deleteinv });
+  try {
+    updatesexistinvoice = await InvoiceDetail.find({
+      userid: userid,
+      invoiceid: singleinvoice.invoiceid,
+    });
+  } catch (er) {
+    throw new HttpError("error in exist search", 400);
+  }
+
+  console.log("updatesexistinvoice 22");
+  console.log(updatesexistinvoice);
+
+  if (updatesexistinvoice.length !== 0) {
+    isexistinvoice = updatesexistinvoice[0];
+    beforeisexistsalestock = JSON.parse(JSON.stringify(isexistinvoice));
+    console.log("beforeisexistsalestock 22");
+    console.log(beforeisexistsalestock);
+    let responseDeleteInvoice = await addOrUpdateStock(
+      beforeisexistsalestock.list,
+      userid,
+      "deleteinvoice"
+    );
+    console.log("responseDeleteInvoice 22");
+    console.log(responseDeleteInvoice);
+
+    if (responseDeleteInvoice != "updated")
+      return res.status(400).json("error in " + responseDeleteInvoice);
+
+    try {
+      // If 'id' is a string or number, no need to cast it to ObjectId
+      const deleteinv = await InvoiceDetail.findOneAndDelete({
+        productid: isexistinvoice.productid, // Custom field 'id' in the query
+        userid: userid, // Custom field 'userid' in the query
+      });
+      console.log("deleteinv");
+      console.log(deleteinv);
+      if (!deleteinv) {
+        return res.status(404).json({ message: "Stock not found" });
+      }
+      return res
+        .status(200)
+        .json({ message: "Invoice deleted successfully", deleteinv });
+    } catch (error) {
+      console.error(error); // For debugging purposes
+      return res.status(400).json({ message: error.message });
+    }
+  }
+};
+
 exports.getInvoiceid = getInvoiceid;
 exports.incremeantinvoiceid = incremeantinvoiceid;
 exports.createorupdateinvoice = createorupdateinvoice;
 exports.getallestimateinvoice = getallestimateinvoice;
 exports.createorupdateestimateinvoice = createorupdateestimateinvoice;
 exports.getallinvoice = getallinvoice;
+exports.deleteInvoice = deleteInvoice;
